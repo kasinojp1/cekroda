@@ -74,7 +74,6 @@ button:disabled {opacity:0.6; cursor:not-allowed;}
   left: 50%;
   transform-origin: 0% 0%;
   border-top-right-radius: 300px;
-  background: #ff6b6b;
   color: #111;
   display: flex;
   align-items: flex-end;
@@ -83,12 +82,6 @@ button:disabled {opacity:0.6; cursor:not-allowed;}
   font-weight: 700;
   text-shadow: 0 2px 4px rgba(0,0,0,0.4);
 }
-.segment:nth-child(1) {transform: rotate(0deg) skewY(-30deg); background:#ff6b6b;}
-.segment:nth-child(2) {transform: rotate(60deg) skewY(-30deg); background:#ff9f1c;}
-.segment:nth-child(3) {transform: rotate(120deg) skewY(-30deg); background:#06d6a0;}
-.segment:nth-child(4) {transform: rotate(180deg) skewY(-30deg); background:#1b9aaa;}
-.segment:nth-child(5) {transform: rotate(240deg) skewY(-30deg); background:#9d4edd;}
-.segment:nth-child(6) {transform: rotate(300deg) skewY(-30deg); background:#ffd166;}
 
 /* Penanda atas */
 .pointer {
@@ -123,14 +116,7 @@ button:disabled {opacity:0.6; cursor:not-allowed;}
 
 <div class="wheel-container">
   <div class="pointer"></div>
-  <div class="wheel" id="wheel">
-    <div class="segment">PLATINUM</div>
-    <div class="segment">DIAMOND</div>
-    <div class="segment">SILVER</div>
-    <div class="segment">PERFECT</div>
-    <div class="segment">EPIC</div>
-    <div class="segment">MYTHIC</div>
-  </div>
+  <div class="wheel" id="wheel"></div>
 </div>
 
 <div id="result">Hasil akan muncul di sini</div>
@@ -141,23 +127,40 @@ const spinBtn = document.getElementById('spinBtn');
 const voucherInput = document.getElementById('voucherInput');
 const resultEl = document.getElementById('result');
 
-const segments = ['PLATINUM','DIAMOND','SILVER','PERFECT','EPIC','MYTHIC'];
-let spinning = false;
+// Daftar hadiah (bisa diubah/tambah)
+let segments = ['PLATINUM', 'DIAMOND', 'SILVER', 'PERFECT', 'EPIC'];
 
+// Buat segmen roda
+function createWheel() {
+  wheel.innerHTML = '';
+  const colors = ['#ff6b6b','#ff9f1c','#06d6a0','#1b9aaa','#9d4edd','#ffd166','#f94144'];
+  const angle = 360 / segments.length;
+  segments.forEach((text,i) => {
+    const seg = document.createElement('div');
+    seg.className = 'segment';
+    seg.textContent = text;
+    seg.style.transform = `rotate(${i*angle}deg) skewY(-${90-angle}deg)`;
+    seg.style.background = colors[i % colors.length];
+    wheel.appendChild(seg);
+  });
+}
+
+createWheel();
+
+let spinning = false;
 spinBtn.addEventListener('click', () => {
   const code = voucherInput.value.trim();
   if(!code){alert('Masukkan kode voucher!'); return;}
   if(spinning) return;
   spinning = true;
 
-  // Tentukan hadiah secara acak
   const winnerIndex = Math.floor(Math.random() * segments.length);
-  const rotation = 360*5 + (winnerIndex * 60) + 30; // putar 5 kali + offset ke tengah segmen
+  const angle = 360 / segments.length;
+  const rotation = 360*5 + (winnerIndex * angle) + angle/2;
 
   wheel.style.transition = 'transform 5s cubic-bezier(0.25, 1, 0.5, 1)';
   wheel.style.transform = `rotate(${rotation}deg)`;
 
-  // Setelah animasi selesai, tampilkan hasil
   setTimeout(() => {
     resultEl.textContent = `Selamat! Kamu mendapatkan: ${segments[winnerIndex]}`;
     spinning = false;
