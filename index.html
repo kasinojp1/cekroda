@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roda Hadiah — Natal KASINOJP</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(180deg, #071229, #0c1624);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+h1 {
+  background: linear-gradient(90deg,#ffef9f,#d4af37);
+  -webkit-background-clip:text;
+  color: transparent;
+  font-size: 28px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Input dan tombol */
+.input-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+input[type="text"] {
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 600;
+  flex: 1;
+}
+button {
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: none;
+  background: #ffef9f;
+  color: #111;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s;
+}
+button:hover {background:#ffd966;}
+button:disabled {opacity:0.6; cursor:not-allowed;}
+
+/* Roda */
+.wheel-container {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin-bottom: 20px;
+}
+.wheel {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 8px solid #ffd966;
+  position: relative;
+  overflow: hidden;
+  transition: transform 5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.segment {
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  top: 50%;
+  left: 50%;
+  transform-origin: 0% 0%;
+  border-top-right-radius: 300px;
+  background: #ff6b6b;
+  color: #111;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: 10px;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+}
+.segment:nth-child(1) {transform: rotate(0deg) skewY(-30deg); background:#ff6b6b;}
+.segment:nth-child(2) {transform: rotate(60deg) skewY(-30deg); background:#ff9f1c;}
+.segment:nth-child(3) {transform: rotate(120deg) skewY(-30deg); background:#06d6a0;}
+.segment:nth-child(4) {transform: rotate(180deg) skewY(-30deg); background:#1b9aaa;}
+.segment:nth-child(5) {transform: rotate(240deg) skewY(-30deg); background:#9d4edd;}
+.segment:nth-child(6) {transform: rotate(300deg) skewY(-30deg); background:#ffd166;}
+
+/* Penanda atas */
+.pointer {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 20px solid #ffef9f;
+}
+
+/* Hasil */
+#result {
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+
+<h1>Roda Hadiah — Natal KASINOJP</h1>
+
+<div class="input-row">
+  <input type="text" id="voucherInput" placeholder="Masukkan kode voucher...">
+  <button id="spinBtn">Putar Roda</button>
+</div>
+
+<div class="wheel-container">
+  <div class="pointer"></div>
+  <div class="wheel" id="wheel">
+    <div class="segment">PLATINUM</div>
+    <div class="segment">DIAMOND</div>
+    <div class="segment">SILVER</div>
+    <div class="segment">PERFECT</div>
+    <div class="segment">EPIC</div>
+    <div class="segment">MYTHIC</div>
+  </div>
+</div>
+
+<div id="result">Hasil akan muncul di sini</div>
+
+<script>
+const wheel = document.getElementById('wheel');
+const spinBtn = document.getElementById('spinBtn');
+const voucherInput = document.getElementById('voucherInput');
+const resultEl = document.getElementById('result');
+
+const segments = ['PLATINUM','DIAMOND','SILVER','PERFECT','EPIC','MYTHIC'];
+let spinning = false;
+
+spinBtn.addEventListener('click', () => {
+  const code = voucherInput.value.trim();
+  if(!code){alert('Masukkan kode voucher!'); return;}
+  if(spinning) return;
+  spinning = true;
+
+  // Tentukan hadiah secara acak
+  const winnerIndex = Math.floor(Math.random() * segments.length);
+  const rotation = 360*5 + (winnerIndex * 60) + 30; // putar 5 kali + offset ke tengah segmen
+
+  wheel.style.transition = 'transform 5s cubic-bezier(0.25, 1, 0.5, 1)';
+  wheel.style.transform = `rotate(${rotation}deg)`;
+
+  // Setelah animasi selesai, tampilkan hasil
+  setTimeout(() => {
+    resultEl.textContent = `Selamat! Kamu mendapatkan: ${segments[winnerIndex]}`;
+    spinning = false;
+  }, 5200);
+});
+</script>
+
+</body>
+</html>
